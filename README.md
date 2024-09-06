@@ -1,4 +1,4 @@
-# Extendible Hashing Implementation
+# Extendible Hashing
 
 ## Overview
 
