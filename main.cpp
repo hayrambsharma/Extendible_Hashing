@@ -9,7 +9,7 @@ class Bucket{
     int local_depth, size;
     vector<int> records;
 public:
-    Bucket(int size, int local_depth) : size(size), local_depth(local_depth) {}
+    Bucket(int size, int local_depth = 0) : size(size), local_depth(local_depth) {}
 
     bool search(int key){
         return find(records.begin(), records.end(), key) != records.end();
@@ -64,10 +64,8 @@ class Directory{
     vector<Bucket*> buckets;
 public:
     Directory(int size) : bucket_size(size) {
-        global_depth = 1;
-        buckets.resize(2);
-        buckets[0] = new Bucket(bucket_size, 1);
-        buckets[1] = new Bucket(bucket_size, 1);
+        global_depth = 0;
+        buckets.push_back(new Bucket(bucket_size));
     }
 
     int hash(int n){
@@ -134,6 +132,7 @@ public:
         int dir_no = hash(key);
         if(!buckets[dir_no] -> remove(key)) return;
         int local_depth = buckets[dir_no] -> getDepth();
+        if(!local_depth) return;
         int pair_no = dir_no ^ 1 << local_depth - 1;
         if(dir_no > pair_no) swap(dir_no, pair_no);
         int b_size = buckets[dir_no] -> getSize();
@@ -142,6 +141,7 @@ public:
             merge(dir_no, pair_no);
             dir_no = hash(key);
             local_depth--;
+            if(!local_depth) return;
             pair_no = dir_no ^ 1 << local_depth - 1;
             if(dir_no > pair_no) swap(dir_no, pair_no);
             b_size = buckets[dir_no] -> getSize();
@@ -221,10 +221,12 @@ int main(){
             case 'S':{
                 cout << "Enter the key to be searched for : ";
                 string key; cin >> key;
-                if(!isint(key)) cout << key << " has not been found\n";
-                int bucket_no = d.search(stoi(key));
-                if(bucket_no == -1) cout << key << " has not been found\n";
-                else cout << key << " has been found in bucket " << bucket_no << '\n';
+                if(isint(key)){
+                    int bucket_no = d.search(stoi(key));
+                    if(bucket_no == -1) cout << key << " has not been found\n";
+                    else cout << key << " has been found in bucket " << bucket_no << '\n';
+                }
+                else cout << key << " has not been found\n";
                 break;
             }
             case 'P':{
