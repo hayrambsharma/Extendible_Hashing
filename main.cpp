@@ -2,10 +2,7 @@
 using namespace std;
 
 bool isint(string s){
-    if(s.size() > 9) return false;
-    for(auto c : s)
-        if(c < '0' || c > '9') return false;
-    return true;
+    return all_of(s.begin(), s.end(), ::isdigit);
 }
 
 class Bucket{
@@ -150,7 +147,6 @@ public:
             b_size = buckets[dir_no] -> getSize();
             p_size = buckets[pair_no] -> getSize();
         }
-        return;
     }
 
     void merge(int dir_no, int pair_no){
@@ -206,6 +202,7 @@ int main(){
     char op;
     while(true){
         cin >> op;
+        op = toupper(op);
         switch(op){
             case 'I':{
                 cout << "Enter the key to be inserted : ";
